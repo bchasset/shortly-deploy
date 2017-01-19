@@ -1,8 +1,15 @@
 module.exports = function(grunt) {
-//testing live remote
+
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     concat: {
+      options: {
+        separator: ';'
+      },
+      dist: {
+        src: ['public/**/*.js'],
+        dest: 'dist/<%=pkg.client %>.js'
+      }
     },
 
     mochaTest: {
@@ -21,6 +28,15 @@ module.exports = function(grunt) {
     },
 
     uglify: {
+      options: {
+    // the banner is inserted at the top of the output
+        banner: '/*! <%= pkg.client %> <%= grunt.template.today("dd-mm-yyyy") %> */\n'
+      },
+      dist: {
+        files: {
+          'dist/<%= pkg.client %>.min.js': ['<%= concat.dist.dest %>']
+    }
+  }
     },
 
     eslint: {
@@ -77,6 +93,9 @@ module.exports = function(grunt) {
   ]);
 
   grunt.registerTask('build', [
+    'concat',
+    'uglify',
+    'nodemon'
   ]);
 
   grunt.registerTask('upload', function(n) {
