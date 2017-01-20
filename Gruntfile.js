@@ -7,8 +7,8 @@ module.exports = function(grunt) {
         separator: ';'
       },
       dist: {
-        src: ['public/**/*.js'],
-        dest: 'dist/<%=pkg.client %>.js'
+        src: ['public/client/*.js'],
+        dest: 'public/dist/concat.js'
       }
     },
 
@@ -34,14 +34,14 @@ module.exports = function(grunt) {
       },
       dist: {
         files: {
-          'dist/<%= pkg.client %>.min.js': ['<%= concat.dist.dest %>']
+          'public/dist/whole-client.min.js': ['<%= concat.dist.dest %>']
     }
   }
     },
 
     eslint: {
       target: [
-        // Add list of files to lint here
+        'public/dist/whole-client.min.js'
       ]
     },
 
@@ -95,6 +95,7 @@ module.exports = function(grunt) {
   grunt.registerTask('build', [
     'concat',
     'uglify',
+    'eslint',
     'nodemon'
   ]);
 
