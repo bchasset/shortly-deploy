@@ -11,7 +11,7 @@ var Link = require('../app/models/link');
 // NOTE: these tests are designed for mongo!
 /////////////////////////////////////////////////////
 
-xdescribe('', function() {
+describe('', function() {
 
   beforeEach(function(done) {
     // Log out currently signed in user
@@ -167,6 +167,22 @@ xdescribe('', function() {
         .end(done);
     });
 
+    it('Password is stored as a hash', function(done) {
+      request(app)
+        .post('/signup')
+        .send({
+          'username': 'Svnh',
+          'password': 'Svnh' })
+        .expect(302)
+        .expect(function() {
+          User.findOne({'username': 'Svnh'})
+            .exec(function(err, user) {
+              expect(user.password).to.not.equal('Svnh');
+            });
+        })
+        .end(done);
+    });
+
   }); // 'Privileged Access'
 
   describe('Account Creation:', function() {
@@ -199,6 +215,19 @@ xdescribe('', function() {
           request(app)
             .get('/logout')
             .expect(200);
+        })
+        .end(done);
+    });
+
+    it('Does not allow multiple users with the same username', function(done) {
+      request(app)
+        .post('/signup')
+        .send({
+          'username': 'Svnh',
+          'password': 'Svnh' })
+        .expect(302)
+        .expect(function(res) {
+          expect(res.headers.location).to.equal('/signup');
         })
         .end(done);
     });
